@@ -1,0 +1,96 @@
+package projects
+
+import domain.SubProject
+import jetbrains.buildServer.configs.kotlin.Project
+import jetbrains.buildServer.configs.kotlin.RelativeId
+import jetbrains.buildServer.configs.kotlin.buildSteps.script
+import jetbrains.buildServer.configs.kotlin.triggers.finishBuildTrigger
+
+object LumeReleaseProject: Project() {
+
+    fun create(subProjects: ArrayList<SubProject>): Project {
+        return Project {
+            id = RelativeId(Configuration.RELEASE_REPO_NAME.replace("-", "_"))
+
+            name = Configuration.RELEASE_REPO_NAME
+            description = "Lume Platform Project"
+
+            buildType {
+                templates(RelativeId("GitHubTriggerNotify"))
+                id = RelativeId(Configuration.RELEASE_REPO_NAME.replace("-", "_") + "_AllBranchBuild")
+                name = "Build"
+
+                description = Configuration.RELEASE_REPO_NAME + " regular build for testing a commit"
+
+                vcs {
+                    root(RelativeId(Configuration.RELEASE_REPO_NAME.replace("-", "_") + "_GitHub"))
+                }
+
+                steps {
+                    script {
+                        name = "Build"
+                        id = "Build"
+                        scriptContent = """
+                            ./scripts/build.sh
+                        """.trimIndent()
+                    }
+                    script {
+                        name = "Test"
+                        id = "Test"
+                        scriptContent = """
+                            ./scripts/test.sh
+                        """.trimIndent()
+                    }
+                }
+            }
+
+            buildType {
+                id = RelativeId(Configuration.RELEASE_REPO_NAME.replace("-", "_") + "_DependencyUpdate")
+                name = "Dependency Version Update"
+                description = Configuration.RELEASE_REPO_NAME + " build to update subproject dependency version"
+
+                maxRunningBuildsPerBranch = "*:1"
+
+                vcs {
+                    root(RelativeId(Configuration.RELEASE_REPO_NAME.replace("-", "_") + "_GitHub"))
+                }
+
+                steps {
+                    script {
+                        name = "Build"
+                        id = "Build"
+                        scriptContent = """
+                            ./scripts/updateVersion.sh %SERVICE_NAME% %SERVICE_VERSION% "%SERVICE_BRANCH%"
+                        """.trimIndent()
+                    }
+                }
+
+                triggers {
+                    for (subproject in subProjects) {
+                        finishBuildTrigger {
+                            buildType = RelativeId(subproject.normalizedName() + "_Release").toString()
+                            successfulOnly = true
+                            branchFilter = """
+                                +:<default>
+                                +:release*
+                            """.trimIndent()
+
+                            buildParams {
+                                param("SERVICE_NAME", subproject.normalizedName())
+                                param("SERVICE_VERSION", "%dep.${RelativeId(subproject.normalizedName() + "_Release")}.OUT_SERVICE_VERSION%")
+                                param("SERVICE_BRANCH", "%dep.${RelativeId(subproject.normalizedName() + "_Release")}.OUT_SERVICE_BRANCH%")
+                            }
+                        }
+                    }
+                }
+
+                dependencies {
+                    for (subproject in subProjects) {
+                        snapshot(RelativeId(subproject.normalizedName() + "_Release")) {
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
