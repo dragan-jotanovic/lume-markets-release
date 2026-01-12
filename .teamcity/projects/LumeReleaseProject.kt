@@ -33,6 +33,8 @@ object LumeReleaseProject: Project() {
                         scriptContent = """
                             ./scripts/build.sh
                         """.trimIndent()
+                        dockerImage = "repo.prd.lucera.com/release-it-docker:0.7.0"
+                        dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
                     }
                     script {
                         name = "Test"
@@ -40,6 +42,14 @@ object LumeReleaseProject: Project() {
                         scriptContent = """
                             ./scripts/test.sh
                         """.trimIndent()
+                    }
+                }
+                
+                features {
+                    dockerRegistryConnections {
+                        loginToRegistry = on {
+                            dockerRegistryId = "PROJECT_EXT_6"
+                        }
                     }
                 }
             }
@@ -62,6 +72,8 @@ object LumeReleaseProject: Project() {
                         scriptContent = """
                             ./scripts/updateVersion.sh %SERVICE_NAME% %SERVICE_VERSION% "%SERVICE_BRANCH%"
                         """.trimIndent()
+                        dockerImage = "repo.prd.lucera.com/release-it-docker:0.7.0"
+                        dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
                     }
                 }
 
@@ -80,6 +92,14 @@ object LumeReleaseProject: Project() {
                                 param("SERVICE_VERSION", "%dep.${RelativeId(subproject.normalizedName() + "_Release")}.OUT_SERVICE_VERSION%")
                                 param("SERVICE_BRANCH", "%dep.${RelativeId(subproject.normalizedName() + "_Release")}.OUT_SERVICE_BRANCH%")
                             }
+                        }
+                    }
+                }
+                
+                features {
+                    dockerRegistryConnections {
+                        loginToRegistry = on {
+                            dockerRegistryId = "PROJECT_EXT_6"
                         }
                     }
                 }
