@@ -42,12 +42,14 @@ gitCheckout() {
 
 # Function to commit and push changes to a git repository using provided credentials.
 gitCommitAndPush() {
-    local COMMIT_MESSAGE=$1
+    local REPO_NAME=$1
+    local COMMIT_MESSAGE=$2
     
     if [ -n "$(git status --porcelain)" ]; then
         git add -A
         git commit -m "${COMMIT_MESSAGE}"
-        git push
+        REPO_PREFIX_WITH_USER=$(echo "$REPO_PREFIX" | sed "s/github.com/${GIT_USERNAME}@github.com/")
+        git push ${REPO_PREFIX_WITH_USER}${REPO_NAME}
     else
       echo "There were no changes, nothing to commit!";
     fi

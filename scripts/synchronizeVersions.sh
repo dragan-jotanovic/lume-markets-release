@@ -79,7 +79,7 @@ if [[ -n "$TEAMCITY_VERSION" && $updates_made -gt 0 ]]; then
     echo "Copy ${METADATA_FILE} to ./packs/lume_release/metadata.hcl"
     cp ${METADATA_FILE} ./packs/lume_release/metadata.hcl
     echo "Commiting fixed versions..."
-    gitCommitAndPush "ci: Synchronizing dependency versions"
+    gitCommitAndPush "${RELEASE_REPO_NAME}" "ci: Synchronizing dependency versions"
     cd ../..
 fi
 

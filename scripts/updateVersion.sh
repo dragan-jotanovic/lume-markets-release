@@ -75,7 +75,7 @@ echo "Updated metadata.hcl file"
 
 if [[ -n "$TEAMCITY_VERSION" ]]; then
     echo "Commiting updated version..."
-    gitCommitAndPush "ci: Updated dependency version for ${SERVICE_NAME}"
+    gitCommitAndPush "$RELEASE_REPO_NAME" "ci: Updated dependency version for ${SERVICE_NAME}"
 fi
 
 echo ""
