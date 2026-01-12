@@ -47,6 +47,7 @@ if [[ -n "$TEAMCITY_VERSION" ]]; then
     echo "Updating repo to latest revision"
     gitSetup
     gitCheckout "${RELEASE_REPO_NAME}" $RELEASE_BRANCH
+    cd checkouts/$REPO_NAME
     git pull
 fi
 

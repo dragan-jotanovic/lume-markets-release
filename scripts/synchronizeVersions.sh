@@ -77,6 +77,10 @@ if [[ -n "$TEAMCITY_VERSION" && $updates_made -gt 0 ]]; then
     gitCheckout "${RELEASE_REPO_NAME}" "${CURRENT_BRANCH}"
     cd checkouts/${RELEASE_REPO_NAME}
     git pull
+    echo "Copy ${METADATA_FILE} to ./packs/lume_release/metadata.hcl"
+    ls -l ./
+    ls -l ./packs/
+    ls -l ./packs/lume_release/
     cp ${METADATA_FILE} ./packs/lume_release/metadata.hcl
     echo "Commiting fixed versions..."
     gitCommitAndPush "ci: Synchronizing dependency versions"
