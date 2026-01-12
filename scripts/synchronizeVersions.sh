@@ -72,8 +72,9 @@ while IFS=': ' read -r dep_name dep_version || [[ -n "$dep_name" ]]; do
 done < "$DEPENDENCIES_FILE"
 
 if [[ -n "$TEAMCITY_VERSION" && $updates_made -gt 0 ]]; then
+    CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
     gitSetup
-    gitCheckout "${RELEASE_REPO_NAME}" "%teamcity.build.branch%"
+    gitCheckout "${RELEASE_REPO_NAME}" "${CURRENT_BRANCH}"
     git pull
     cp ${METADATA_FILE} packs/lume_release/
     echo "Commiting fixed versions..."
