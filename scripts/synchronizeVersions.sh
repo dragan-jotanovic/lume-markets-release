@@ -76,7 +76,6 @@ if [[ -n "$TEAMCITY_VERSION" && $updates_made -gt 0 ]]; then
     gitSetup
     gitCheckout "${RELEASE_REPO_NAME}" "${CURRENT_BRANCH}"
     cd checkouts/${RELEASE_REPO_NAME}
-    git pull
     echo "Copy ${METADATA_FILE} to ./packs/lume_release/metadata.hcl"
     cp ${METADATA_FILE} ./packs/lume_release/metadata.hcl
     echo "Commiting fixed versions..."

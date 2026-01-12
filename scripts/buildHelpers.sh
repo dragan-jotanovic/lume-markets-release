@@ -35,6 +35,8 @@ gitCheckout() {
         echo "Checking out branch: ${BRANCH}"
         git checkout $BRANCH
     fi
+    git reset --hard HEAD
+    git pull
     cd ../..
 }
 
