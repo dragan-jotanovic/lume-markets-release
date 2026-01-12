@@ -24,11 +24,12 @@ gitCheckout() {
     cd checkouts/$REPO_NAME
     
     inside_git_repo="$(git rev-parse --is-inside-work-tree 2>/dev/null)"
-    if [ "$inside_git_repo" -ne "true" ]; then
+    if [ "$inside_git_repo" != "true" ]; then
         REPO_PREFIX_WITH_USER=$(echo "$REPO_PREFIX" | sed "s/github.com/${GIT_USERNAME}@github.com/")
         git clone ${REPO_PREFIX_WITH_USER}${REPO_NAME} .
     fi
     if [[ "$BRANCH" ]]; then
+        echo "Checking out branch: ${BRANCH}"
         git checkout $BRANCH
     fi
 }
