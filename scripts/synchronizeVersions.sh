@@ -78,7 +78,7 @@ if [[ -n "$TEAMCITY_VERSION" && $updates_made -gt 0 ]]; then
     cd checkouts/${RELEASE_REPO_NAME}
     git pull
     echo "Copy ${METADATA_FILE} to ./packs/lume_release/metadata.hcl"
-    ls -l ./
+    pwd
     ls -l ./packs/
     ls -l ./packs/lume_release/
     cp ${METADATA_FILE} ./packs/lume_release/metadata.hcl

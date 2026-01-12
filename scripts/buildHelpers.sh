@@ -23,9 +23,9 @@ gitCheckout() {
     mkdir -p checkouts/$REPO_NAME
     cd checkouts/$REPO_NAME
     
-    inside_git_repo="$(git rev-parse --is-inside-work-tree 2>/dev/null)"
-    if [ "$inside_git_repo" != "true" ]; then
+    if [ ! -d "./.git" ]; then
         REPO_PREFIX_WITH_USER=$(echo "$REPO_PREFIX" | sed "s/github.com/${GIT_USERNAME}@github.com/")
+        echo "Cloning ${REPO_PREFIX_WITH_USER}${REPO_NAME} to $(pwd)"
         git clone ${REPO_PREFIX_WITH_USER}${REPO_NAME} .
     fi
     if [[ "$BRANCH" ]]; then
