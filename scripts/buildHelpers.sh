@@ -32,6 +32,7 @@ gitCheckout() {
         echo "Checking out branch: ${BRANCH}"
         git checkout $BRANCH
     fi
+    cd ../..
 }
 
 # Function to commit and push changes to a git repository using provided credentials.

@@ -75,10 +75,12 @@ if [[ -n "$TEAMCITY_VERSION" && $updates_made -gt 0 ]]; then
     CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
     gitSetup
     gitCheckout "${RELEASE_REPO_NAME}" "${CURRENT_BRANCH}"
+    cd checkouts/${RELEASE_REPO_NAME}
     git pull
-    cp ${METADATA_FILE} packs/lume_release/
+    cp ${METADATA_FILE} ./packs/lume_release/metadata.hcl
     echo "Commiting fixed versions..."
     gitCommitAndPush "ci: Synchronizing dependency versions"
+    cd ../..
 fi
 
 echo ""
