@@ -17,8 +17,8 @@ gitSetup() {
 }
 
 gitCheckout() {
-    local REPO_NAME = $1
-    local BRANCH = $2
+    local REPO_NAME=$1
+    local BRANCH=$2
     
     mkdir -p checkouts/$REPO_NAME
     cd checkouts/$REPO_NAME
