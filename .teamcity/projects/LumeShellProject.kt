@@ -68,7 +68,7 @@ object LumeShellProject: Project() {
                         scriptContent = """
                             release-it-containerized patch --ci
                         """.trimIndent()
-                        dockerImage = "repo.prd.lucera.com/release-it-docker:0.7.0"
+                        dockerImage = Configuration.RELEASE_IT_DOCKER_IMAGE
                         dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
                     }
                     script {

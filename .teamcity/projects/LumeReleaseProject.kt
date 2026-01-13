@@ -35,7 +35,7 @@ object LumeReleaseProject: Project() {
                         scriptContent = """
                             ./scripts/build.sh
                         """.trimIndent()
-                        dockerImage = "repo.prd.lucera.com/release-it-docker:0.7.0"
+                        dockerImage = Configuration.RELEASE_IT_DOCKER_IMAGE
                         dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
                     }
                     script {
@@ -74,7 +74,7 @@ object LumeReleaseProject: Project() {
                         scriptContent = """
                             ./scripts/updateVersion.sh %SERVICE_NAME% %SERVICE_VERSION% "%SERVICE_BRANCH%"
                         """.trimIndent()
-                        dockerImage = "repo.prd.lucera.com/release-it-docker:0.7.0"
+                        dockerImage = Configuration.RELEASE_IT_DOCKER_IMAGE
                         dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
                     }
                 }

@@ -40,7 +40,7 @@ project {
             branchSpec = "+:refs/heads/(*)"
 
             authMethod = password {
-                userName = "Teamcity"
+                userName = Configuration.GIT_USERNAME
                 password = "%" + Configuration.GITHUB_TOKEN_CONFIGURATION_PROPERTY + "%"
             }
         })
@@ -56,7 +56,7 @@ project {
         branchSpec = "+:refs/heads/(*)"
 
         authMethod = password {
-            userName = "Teamcity"
+            userName = Configuration.GIT_USERNAME
             password = "%" + Configuration.GITHUB_TOKEN_CONFIGURATION_PROPERTY + "%"
         }
     })
@@ -69,8 +69,8 @@ project {
     subProject(LumeReleaseProject.create(Configuration.SUBPROJECTS))
 
     params {
-        param("env.GIT_EMAIL", "support@lucera.com")
-        param("env.GIT_USERNAME", "Teamcity")
+        param("env.GIT_EMAIL", Configuration.GIT_EMAIL)
+        param("env.GIT_USERNAME", Configuration.GIT_USERNAME)
         password("env.GITHUB_TOKEN", "%" + Configuration.GITHUB_TOKEN_CONFIGURATION_PROPERTY + "%")
         param("env.REPO_PREFIX", Configuration.VCS_PREFIX)
         param("env.RELEASE_REPO_NAME", Configuration.RELEASE_REPO_NAME)
