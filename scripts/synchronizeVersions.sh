@@ -72,8 +72,8 @@ while IFS=': ' read -r dep_name dep_version || [[ -n "$dep_name" ]]; do
 done < "$DEPENDENCIES_FILE"
 
 if [[ -n "$TEAMCITY_VERSION" && $updates_made -gt 0 ]]; then
-    CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
     gitSetup
+    CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
     gitCheckout "${RELEASE_REPO_NAME}" "${CURRENT_BRANCH}"
     cd checkouts/${RELEASE_REPO_NAME}
     echo "Copy ${METADATA_FILE} to ./packs/lume_release/metadata.hcl"
