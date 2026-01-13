@@ -17,7 +17,7 @@ if [[ -n "$TEAMCITY_VERSION" ]]; then
     cd "checkouts/${RELEASE_REPO_NAME}"
     git pull
 
-    ./scripts/updateVersion.sh "${SERVICE_NAME}" "${VERSION}" "${RELEASE_BRANCH}"
+    ./scripts/updateVersion.sh "${SERVICE_NAME}" "${VERSION}"
 
     echo "Commiting updated version..."
     gitCommitAndPush "$RELEASE_REPO_NAME" "ci: Updated dependency version for ${SERVICE_NAME}"

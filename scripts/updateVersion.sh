@@ -10,7 +10,7 @@ VERSION="$2"
 
 # Function to display usage
 usage() {
-    echo "Usage: $0 <service_name> <version> <release_branch>"
+    echo "Usage: $0 <service_name> <version>"
     echo ""
     echo "Arguments:"
     echo "  service_name  Name of the service to update (e.g., core_backend, venue_adapters)"
