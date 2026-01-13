@@ -1,6 +1,42 @@
 #!/bin/bash
 # Set of utility functions
 
+readVersion() {
+  local version=$(cat VERSION)
+  echo $version
+}
+
+incrementVersionNumber() {
+  local version=$1
+  IFS=. read -r major minor patch <<<"$version"
+  ((patch++))
+  echo "${major}.${minor}.${patch}"
+}
+
+decrementVersionNumber() {
+  local version=$1
+  previousVersion=$(echo ${version} | awk -F. -v OFS=. '{$NF -= 1 ; print}')
+  echo $previousVersion
+}
+
+getNextMinorVersion() {
+  local version=$1
+  IFS=. read -r major minor patch <<<"$version"
+  ((minor++))
+  echo "${major}.${minor}.0"
+}
+
+getReleaseVersion() {
+  local version=$1
+  IFS=. read -r major minor patch <<<"$version"
+  echo "${major}.${minor}"
+}
+
+updateVersion() {
+  local version=$1
+  echo "${version}" >VERSION
+}
+
 gitSetup() {
     GIT_EMAIL="${GIT_EMAIL:-support@lucera.com}"
     GIT_USERNAME="${GIT_USERNAME:-Teamcity}"
@@ -93,6 +129,9 @@ generateReleaseNotesText() {
     if [[ -z $PREV_TAG ]]; then
         COMMITS="$(git log --pretty='%s')"
     else
+        if [[ "$CURRENT_TAG" != *.0 ]]; then
+            PREV_TAG="v$(decrementVersionNumber ${CURRENT_TAG#v})"
+        fi
         COMMITS="$(git log --pretty='%s' ${PREV_TAG}..${CURRENT_TAG})"
     fi
 
