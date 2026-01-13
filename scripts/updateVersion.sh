@@ -7,7 +7,6 @@ set -e
 
 SERVICE_NAME="$1"
 VERSION="$2"
-RELEASE_BRANCH="$3"
 
 # Function to display usage
 usage() {
@@ -23,8 +22,8 @@ usage() {
 }
 
 # Check if both arguments are provided
-if [ $# -ne 3 ]; then
-    echo "Error: All service name, version and release branch are required."
+if [ $# -ne 2 ]; then
+    echo "Error: Both service name and version are required."
     usage
 fi
 
@@ -32,14 +31,6 @@ fi
 if [[ ! "$VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
     echo "ERROR: Version '$VERSION' does not match expected format (e.g., v0.1.7)"
     exit 1
-fi
-
-source "./scripts/buildHelpers.sh"
-
-if [[ -n "$TEAMCITY_VERSION" ]]; then
-    gitSetup
-    gitCheckout "${RELEASE_REPO_NAME}" "${RELEASE_BRANCH}"
-    cd "checkouts/${RELEASE_REPO_NAME}"
 fi
 
 # Get the base dir
@@ -70,11 +61,6 @@ echo "Updated DEPENDENCIES file"
 # Match the dependency block for the service and update the ref parameter
 sed -i "/dependency \"${SERVICE_NAME}\"/,/^}/s/ref=[^&]*/ref=${VERSION}/" "$METADATA_FILE"
 echo "Updated metadata.hcl file"
-
-if [[ -n "$TEAMCITY_VERSION" ]]; then
-    echo "Commiting updated version..."
-    gitCommitAndPush "$RELEASE_REPO_NAME" "ci: Updated dependency version for ${SERVICE_NAME}"
-fi
 
 echo ""
 echo "Successfully updated $SERVICE_NAME to $VERSION"

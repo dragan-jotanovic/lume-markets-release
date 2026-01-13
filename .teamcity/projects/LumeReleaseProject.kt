@@ -72,7 +72,7 @@ object LumeReleaseProject: Project() {
                         name = "Build"
                         id = "Build"
                         scriptContent = """
-                            ./scripts/updateVersion.sh %SERVICE_NAME% %SERVICE_VERSION% "%SERVICE_BRANCH%"
+                            ./scripts/dependencyUpdate.sh %SERVICE_NAME% %SERVICE_VERSION% "%SERVICE_BRANCH%"
                         """.trimIndent()
                         dockerImage = Configuration.RELEASE_IT_DOCKER_IMAGE
                         dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
