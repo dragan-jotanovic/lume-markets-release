@@ -22,7 +22,8 @@ gitCheckout() {
     
     mkdir -p checkouts/$REPO_NAME
     cd checkouts/$REPO_NAME
-    
+
+    git config --global --add safe.directory "$(pwd)"
     if [ ! -d "./.git" ]; then
         REPO_PREFIX_WITH_USER=$(echo "$REPO_PREFIX" | sed "s/github.com/${GIT_USERNAME}@github.com/")
         echo "Cloning ${REPO_PREFIX_WITH_USER}${REPO_NAME} to $(pwd)"
@@ -30,7 +31,6 @@ gitCheckout() {
         git config user.email "${GIT_EMAIL}"
         git config user.name "${GIT_USERNAME}"
         git config credential.helper '!f() { echo username=${GIT_USERNAME}; echo "password=$GITHUB_TOKEN"; };f'
-        git config --global --add safe.directory "$(pwd)"
     fi
     if [[ "$BRANCH" ]]; then
         echo "Checking out branch: ${BRANCH}"
