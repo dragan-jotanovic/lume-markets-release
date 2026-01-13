@@ -44,11 +44,9 @@ if [[ ! "$VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
 fi
 
 if [[ -n "$TEAMCITY_VERSION" ]]; then
-    echo "Updating repo to latest revision"
     gitSetup
-    gitCheckout "${RELEASE_REPO_NAME}" $RELEASE_BRANCH
-    cd checkouts/$REPO_NAME
-    git pull
+    gitCheckout "${RELEASE_REPO_NAME}" "${RELEASE_BRANCH}"
+    cd "checkouts/${RELEASE_REPO_NAME}"
 fi
 
 # Check if service exists in DEPENDENCIES file

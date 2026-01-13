@@ -34,7 +34,7 @@ gitCheckout() {
     fi
     if [[ "$BRANCH" ]]; then
         echo "Checking out branch: ${BRANCH}"
-        git checkout $BRANCH
+        git checkout "$BRANCH"
     fi
     git reset --hard HEAD
     git pull

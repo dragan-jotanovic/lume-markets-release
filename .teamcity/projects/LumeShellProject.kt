@@ -78,7 +78,7 @@ object LumeShellProject: Project() {
                             version="$(cat VERSION)"
                             branch="$(git rev-parse --abbrev-ref HEAD)"
                             echo "##teamcity[setParameter name='SERVICE_VERSION' value='v${"$"}{version}']"
-                            echo "##teamcity[setParameter name='SERVICE_BRANCH' value='v${"$"}{branch}']"
+                            echo "##teamcity[setParameter name='SERVICE_BRANCH' value='${"$"}{branch}']"
                         """.trimIndent()
                     }
                 }
