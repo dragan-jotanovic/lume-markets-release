@@ -10,10 +10,10 @@ gitSetup() {
         exit 1
     fi
     
-    # Configure git with provided user details and credentials
+    # Configure git with provided user details
     git config --global user.email "${GIT_EMAIL}"
     git config --global user.name "${GIT_USERNAME}"
-    git config credential.helper '!f() { echo username=${GIT_USERNAME}; echo "password=$GITHUB_TOKEN"; };f'
+    git config --global --add safe.directory "$(pwd)"
 }
 
 gitCheckout() {
@@ -30,6 +30,7 @@ gitCheckout() {
         git config user.email "${GIT_EMAIL}"
         git config user.name "${GIT_USERNAME}"
         git config credential.helper '!f() { echo username=${GIT_USERNAME}; echo "password=$GITHUB_TOKEN"; };f'
+        git config --global --add safe.directory "$(pwd)"
     fi
     if [[ "$BRANCH" ]]; then
         echo "Checking out branch: ${BRANCH}"
