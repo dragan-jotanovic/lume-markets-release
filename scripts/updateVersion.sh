@@ -28,27 +28,26 @@ if [ $# -ne 3 ]; then
     usage
 fi
 
-if [[ -n "$TEAMCITY_VERSION" ]]; then
-    gitSetup
-    gitCheckout "${RELEASE_REPO_NAME}" "${RELEASE_BRANCH}"
-    cd "checkouts/${RELEASE_REPO_NAME}"
-fi
-
 # Validate version format (should start with 'v' followed by semver)
 if [[ ! "$VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
     echo "ERROR: Version '$VERSION' does not match expected format (e.g., v0.1.7)"
     exit 1
 fi
 
+source "./scripts/buildHelpers.sh"
+
+if [[ -n "$TEAMCITY_VERSION" ]]; then
+    gitSetup
+    gitCheckout "${RELEASE_REPO_NAME}" "${RELEASE_BRANCH}"
+    cd "checkouts/${RELEASE_REPO_NAME}"
+fi
+
 # Get the base dir
 BASE_DIR="$(pwd)"
+echo "Working directory: ${BASE_DIR}"
 
 DEPENDENCIES_FILE="$BASE_DIR/DEPENDENCIES"
 METADATA_FILE="$BASE_DIR/packs/lume_release/metadata.hcl"
-
-source "$BASE_DIR/scripts/buildHelpers.sh"
-
-
 
 # Check if service exists in DEPENDENCIES file
 if ! grep -q "^${SERVICE_NAME}:" "$DEPENDENCIES_FILE"; then
