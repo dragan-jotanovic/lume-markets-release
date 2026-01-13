@@ -72,6 +72,7 @@ project {
         param("env.GIT_EMAIL", Configuration.GIT_EMAIL)
         param("env.GIT_USERNAME", Configuration.GIT_USERNAME)
         password("env.GITHUB_TOKEN", "%" + Configuration.GITHUB_TOKEN_CONFIGURATION_PROPERTY + "%")
+        param("env.GITHUB_ORG", Configuration.GITHUB_ORG)
         param("env.REPO_PREFIX", Configuration.VCS_PREFIX)
         param("env.RELEASE_REPO_NAME", Configuration.RELEASE_REPO_NAME)
         param("env.SUBPROJECT_REPO_NAMES", Configuration.SUBPROJECTS.joinToString(separator = ",") { subProject -> subProject.name })

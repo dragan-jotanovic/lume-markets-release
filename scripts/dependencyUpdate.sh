@@ -20,7 +20,7 @@ if [[ -n "$TEAMCITY_VERSION" ]]; then
     ./scripts/updateVersion.sh "${SERVICE_NAME}" "${VERSION}"
 
     echo "Commiting updated version..."
-    gitCommitAndPush "$RELEASE_REPO_NAME" "ci: Updated dependency version for ${SERVICE_NAME}"
+    gitCommitAndPush "$RELEASE_REPO_NAME" "ci: Updated dependency - ${SERVICE_NAME}=${VERSION}"
 else
     echo "This script should be run from Teamcity CI/CD pipeline"
     exit 1
