@@ -1,5 +1,11 @@
 # Changelog
 
+## [v4.0.4](https://github.com/dragan-jotanovic/lume-markets-release/compare/v4.0.3...v4.0.4) (2026-01-14)
+
+### Fixes
+
+* LCPI-000 - Added new version of build docker image
+
 ## [v4.0.3](https://github.com/dragan-jotanovic/lume-markets-release/compare/v4.0.2...v4.0.3) (2026-01-14)
 
 ### Fixes
