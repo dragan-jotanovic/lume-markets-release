@@ -76,6 +76,7 @@ object LumeReleaseProject: Project() {
                     script {
                         id = "simpleRunner"
                         scriptContent = """
+                            #!/bin/bash
                             source ./scripts/buildHelpers.sh
                             checkoutAndTagReleaseProject
                         """.trimIndent()
