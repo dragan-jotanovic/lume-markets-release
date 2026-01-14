@@ -313,9 +313,10 @@ checkoutAndTagReleaseProject() {
     
     currentVersion=$(readVersion)
     
-    # Check if the current version tag already exists
-    if git rev-parse "v${currentVersion}" >/dev/null 2>&1; then
-        echo "Error: Tag v${currentVersion} already exists"
+    # Check if there are any changes since last tag
+    local numOfCommits=$(git rev-list $(git describe --tags --abbrev=0)..HEAD --count)
+    if [[ "${numOfCommits}" -eq 0 ]] then
+        echo "Error: There were no commits since the last tag! Nothing to do"
         exit 1
     fi
     
