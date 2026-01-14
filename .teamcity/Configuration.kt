@@ -7,7 +7,7 @@ object Configuration {
     const val GITHUB_TOKEN_CONFIGURATION_PROPERTY = "MY_GITHUB_TOKEN"
     const val GIT_EMAIL = "teamcity@lucera.com"
     const val GIT_USERNAME = "teamcity"
-    const val RELEASE_IT_DOCKER_IMAGE = "repo.prd.lucera.com/lume-release-build:0.1.0"
+    const val RELEASE_IT_DOCKER_IMAGE = "repo.prd.lucera.com/lume-release-build:0.2.0"
 
     // Parent release project
     const val RELEASE_REPO_NAME = "lume-markets-release"
