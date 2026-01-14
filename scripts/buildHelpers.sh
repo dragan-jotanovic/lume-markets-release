@@ -330,3 +330,51 @@ checkoutAndTagReleaseProject() {
     tagProject $tagVersion
     cd ../..
 }
+
+prepareReleaseBranch() {
+    repo=$1
+    tag=$2
+    releaseVersion=$3
+    
+    gitCheckout "$repo" "$tag"
+    cd checkouts/${repo}
+    
+    branch="release/${releaseVersion}"
+    branchExists=$(git ls-remote --heads origin ${branch})
+    if [[ -n ${branchExists} ]]; then
+        echo "Release branch ${branch} already exists in ${project} repo"
+    else
+        git checkout -b ${branch}
+        tagVersion=$(readVersion)
+        git push -u origin ${branch}
+    
+        git checkout main
+        nextVersion="$(getNextMinorVersion $tagVersion)"
+        updateVersion ${nextVersion}
+        git add -A
+        git commit -m "ci: Started next release - $nextVersion"
+        git push
+    fi
+    cd ../..
+}
+
+prepareReleaseBranches() {
+    tagVersion=$(readVersion)
+    releaseVersion=$(getReleaseVersion $tagVersion)
+    
+    prepareReleaseBranch "${RELEASE_REPO_NAME}" "main" "$releaseVersion"
+    while IFS= read -r line; do
+        # Skip empty lines
+        [[ -z "$line" ]] && continue
+
+        # Extract service name and tag (format: service_name: vX.Y.Z)
+        local service_name="${line%%:*}"
+        local service_tag="${line#*: }"
+
+        # Skip if we couldn't parse properly
+        [[ -z "$service_name" || -z "$service_tag" ]] && continue
+
+        echo "Preparing release branch for ${service_name} at ${service_tag}"
+        prepareReleaseBranch "${service_name//_/-}" "$service_tag" "$releaseVersion"
+    done < DEPENDENCIES
+}

@@ -157,6 +157,48 @@ object LumeReleaseProject: Project() {
                     }
                 }
             }
+
+            buildType {
+                id = RelativeId(Configuration.RELEASE_REPO_NAME.replace("-", "_") + "_PrepareRelease")
+                name = "Prepare Release Branch"
+
+                description = "Lume Platform release branch preparation"
+
+                vcs {
+                    root(RelativeId(Configuration.RELEASE_REPO_NAME.replace("-", "_") + "_GitHub"))
+
+                    branchFilter = """
+                        +:<default>
+                    """.trimIndent()
+                }
+
+                steps {
+                    script {
+                        id = "simpleRunner"
+                        scriptContent = """
+                            #!/bin/bash
+                            source ./scripts/buildHelpers.sh
+                            prepareReleaseBranches
+                        """.trimIndent()
+                        dockerImage = Configuration.RELEASE_IT_DOCKER_IMAGE
+                        dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+                    }
+                }
+
+                features {
+                    dockerRegistryConnections {
+                        loginToRegistry = on {
+                            dockerRegistryId = "PROJECT_EXT_6"
+                        }
+                    }
+                }
+
+                dependencies {
+                    snapshot(RelativeId(Configuration.RELEASE_REPO_NAME.replace("-", "_") + "_AllBranchBuild")) {
+                        onDependencyFailure = FailureAction.CANCEL
+                    }
+                }
+            }
         }
     }
 }
