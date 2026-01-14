@@ -10,7 +10,7 @@ pack {
 
 dependency "core_backend" {
   alias  = "core_backend"
-  source = "git::https://github.com/dragan-jotanovic/core-backend.git//packs/core_backend?ref=v0.1.9&depth=1"
+  source = "git::https://github.com/dragan-jotanovic/core-backend.git//packs/core_backend?ref=v0.1.10&depth=1"
 }
 
 dependency "venue_adapters" {
