@@ -125,6 +125,8 @@ getGithubReleaseNotesForTag() {
 
 generateReleaseNotesText() {
     local CURRENT_TAG=$1
+    local UP_TO_COMMIT=${2-HEAD}
+    
     local PREV_TAG=$(git describe --abbrev=0 --tags `git rev-list --tags --skip=1 --max-count=1` 2>/dev/null || echo "")
 
     if [[ -z $PREV_TAG ]]; then
@@ -133,7 +135,7 @@ generateReleaseNotesText() {
         if [[ "$CURRENT_TAG" != *.0 ]]; then
             PREV_TAG="v$(decrementVersionNumber ${CURRENT_TAG#v})"
         fi
-        COMMITS="$(git log --pretty='%s' ${PREV_TAG}..${CURRENT_TAG})"
+        COMMITS="$(git log --pretty='%s' ${PREV_TAG}..${UP_TO_COMMIT})"
     fi
 
     local RELEASE_NOTES=""
@@ -294,13 +296,13 @@ updateChangelog() {
 tagProject() {
     local tagVersion=$1
     
-    echo "Generating release notes"
-    releaseNotes="$(generateReleaseNotesText "v${tagVersion}")"
     echo "Updating changelog"
+    releaseNotes="$(generateReleaseNotesText "v${tagVersion}")"
     updateChangelog "${releaseNotes}"
     git add -A
     git commit -m "ci: Release v$tagVersion"
     git tag -a "v${tagVersion}" -m "ci: Release v$tagVersion"
+    echo "Generating release notes"
     git push
     git push --tags
     createGithubRelease "v${tagVersion}" "${releaseNotes}"
