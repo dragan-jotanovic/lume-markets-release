@@ -1,5 +1,7 @@
 # Changelog
 
+## [v4.0.2](https://github.com/dragan-jotanovic/lume-markets-release/compare/v4.0.1...v4.0.2) (2026-01-14)
+
 ## v4.0.1
 
 ### Features
