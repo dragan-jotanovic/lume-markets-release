@@ -1,5 +1,12 @@
 # Changelog
 
+## [v4.0.3](https://github.com/dragan-jotanovic/lume-markets-release/compare/v4.0.2...v4.0.3) (2026-01-14)
+
+### Fixes
+
+* LCPI-000 - Fixed changelog generation
+* LCPI-000 - Updated docker image
+
 ## [v4.0.2](https://github.com/dragan-jotanovic/lume-markets-release/compare/v4.0.1...v4.0.2) (2026-01-14)
 
 ## v4.0.1
