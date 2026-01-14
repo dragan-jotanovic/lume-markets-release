@@ -234,7 +234,7 @@ createGithubRelease() {
     cd ../..
     
     # Package the lume_release folder into a tar.gz archive
-    local archive_name="lume_release_nomad_pack.tar.gz"
+    local archive_name="lume_release_nomad_pack_${tag}.tar.gz"
     echo "Packaging packs/lume_release into ${archive_name}"
     tar -czvf "${archive_name}" -C packs lume_release
 
