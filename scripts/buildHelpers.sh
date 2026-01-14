@@ -148,7 +148,7 @@ generateReleaseNotesText() {
     # Generate header with version comparison link
     local TODAYS_DATE=$(date +%Y-%m-%d)
     if [[ -z "$PREV_TAG" ]]; then
-        RELEASE_NOTES="## ${CURRENT_TAG}\n\n"
+        RELEASE_NOTES="## ${CURRENT_TAG} (${TODAYS_DATE})\n\n"
     else
         RELEASE_NOTES="## [${CURRENT_TAG}](https://github.com/${GITHUB_ORG}/${RELEASE_REPO_NAME}/compare/${PREV_TAG}...${CURRENT_TAG}) (${TODAYS_DATE})\n\n"
     fi
