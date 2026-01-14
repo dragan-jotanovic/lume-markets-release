@@ -1,5 +1,15 @@
 # Changelog
 
+## [v4.0.5](https://github.com/dragan-jotanovic/lume-markets-release/compare/v4.0.4...v4.0.5) (2026-01-14)
+
+### Features
+
+* LCPI-000 - Added support for release branch preparation
+
+### Fixes
+
+* LCPI-000 - Added version number to nomad pack artifact
+
 ## [v4.0.4](https://github.com/dragan-jotanovic/lume-markets-release/compare/v4.0.3...v4.0.4) (2026-01-14)
 
 ### Fixes
