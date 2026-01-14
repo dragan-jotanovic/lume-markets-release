@@ -35,6 +35,7 @@ getReleaseVersion() {
 updateVersion() {
   local version=$1
   echo "${version}" >VERSION
+  sed -i "s/version *= *\"v[0-9]*\.[0-9]*\.[0-9]*\"/version     = \"v${version}\"/" ./packs/lume_release/metadata.hcl
 }
 
 gitSetup() {
@@ -73,7 +74,7 @@ gitCheckout() {
         git checkout "$BRANCH"
     fi
     git reset --hard HEAD
-    git pull
+    git pull --rebase
     cd ../..
 }
 
@@ -86,7 +87,7 @@ gitCommitAndPush() {
         git add -A
         git commit -m "${COMMIT_MESSAGE}"
         REPO_PREFIX_WITH_USER=$(echo "$REPO_PREFIX" | sed "s/github.com/${GIT_USERNAME}@github.com/")
-        git push ${REPO_PREFIX_WITH_USER}${REPO_NAME}
+        git push
     else
       echo "There were no changes, nothing to commit!";
     fi
@@ -124,7 +125,7 @@ getGithubReleaseNotesForTag() {
 
 generateReleaseNotesText() {
     local CURRENT_TAG=$1
-    local PREV_TAG=$(git describe --abbrev=0 --tags `git rev-list --tags --skip=1 --max-count=1` || echo "")
+    local PREV_TAG=$(git describe --abbrev=0 --tags `git rev-list --tags --skip=1 --max-count=1` 2>/dev/null || echo "")
 
     if [[ -z $PREV_TAG ]]; then
         COMMITS="$(git log --pretty='%s')"
@@ -141,6 +142,14 @@ generateReleaseNotesText() {
     local FEATURES=""
     local FIXES=""
     local PATCHES=""
+    
+    # Generate header with version comparison link
+    local TODAYS_DATE=$(date +%Y-%m-%d)
+    if [[ -z "$PREV_TAG" ]]; then
+        RELEASE_NOTES="## ${CURRENT_TAG}\n\n"
+    else
+        RELEASE_NOTES="## [${CURRENT_TAG}](https://github.com/${GITHUB_ORG}/${RELEASE_REPO_NAME}/compare/${PREV_TAG}...${CURRENT_TAG}) (${TODAYS_DATE})\n\n"
+    fi
 
     # First pass: collect all dependency updates and conventional commits
     while IFS= read -r line; do
@@ -149,6 +158,7 @@ generateReleaseNotesText() {
             local dep_part="${line#ci: Updated dependency - }"
             local repo_name="${dep_part%%=*}"
             local version="${dep_part#*=}"
+            repo_name="$(echo $repo_name | sed 's/_/-/g')"
 
             # Track repo order (only add if not already tracked)
             if [[ -z "${REPO_VERSIONS[$repo_name]}" ]]; then
@@ -165,17 +175,17 @@ generateReleaseNotesText() {
             local msg="${line#feat:}"
             msg="${msg#feat(*)}"
             msg="${msg# }"
-            FEATURES="${FEATURES}- ${msg}\n"
+            FEATURES="${FEATURES}* ${msg}\n"
         elif [[ "$line" == "fix:"* || "$line" == "fix("* ]]; then
             local msg="${line#fix:}"
             msg="${msg#fix(*)}"
             msg="${msg# }"
-            FIXES="${FIXES}- ${msg}\n"
+            FIXES="${FIXES}* ${msg}\n"
         elif [[ "$line" == "patch:"* || "$line" == "patch("* ]]; then
             local msg="${line#patch:}"
             msg="${msg#patch(*)}"
             msg="${msg# }"
-            PATCHES="${PATCHES}- ${msg}\n"
+            PATCHES="${PATCHES}* ${msg}\n"
         fi
     done <<< "$COMMITS"
 
@@ -199,7 +209,7 @@ generateReleaseNotesText() {
         # Split versions and process each
         IFS='|' read -ra versions <<< "${REPO_VERSIONS[$repo_name]}"
         for version in "${versions[@]}"; do
-            RELEASE_NOTES="${RELEASE_NOTES}### ${version}\n\n"
+            RELEASE_NOTES="${RELEASE_NOTES}"
 
             # Fetch GitHub release notes for this repo/version
             local github_notes=$(getGithubReleaseNotesForTag "$repo_name" "$version" 2>/dev/null)
@@ -210,4 +220,110 @@ generateReleaseNotesText() {
     done
 
     echo -e "$RELEASE_NOTES"
+}
+
+createGithubRelease() {
+    local tag="$1"
+    local releaseNotes="$2"
+    echo "Creating github release"
+    
+    cd "./packs/lume_release"
+    nomad-pack deps vendor
+    cd ../..
+    
+    # Package the lume_release folder into a tar.gz archive
+    local archive_name="lume_release_nomad_pack.tar.gz"
+    echo "Packaging packs/lume_release into ${archive_name}"
+    tar -czvf "${archive_name}" -C packs lume_release
+
+    # Create the GitHub release with the release notes
+    local release_response=$(curl -s -X POST \
+        -H "Authorization: token ${GITHUB_TOKEN}" \
+        -H "Accept: application/vnd.github.v3+json" \
+        "https://api.github.com/repos/${GITHUB_ORG}/${RELEASE_REPO_NAME}/releases" \
+        -d @- <<EOF
+{
+    "tag_name": "${tag}",
+    "name": "${tag}",
+    "body": $(echo "$releaseNotes" | jq -Rs .),
+    "draft": false,
+    "prerelease": false
+}
+EOF
+)
+
+    # Extract the upload URL from the response
+    local upload_url=$(echo "$release_response" | jq -r '.upload_url' | sed 's/{?name,label}//')
+
+    if [[ -z "$upload_url" || "$upload_url" == "null" ]]; then
+        echo "Error: Failed to create GitHub release"
+        echo "$release_response"
+        return 1
+    fi
+
+    echo "Uploading ${archive_name} to release"
+    curl -s -X POST \
+        -H "Authorization: token ${GITHUB_TOKEN}" \
+        -H "Content-Type: application/gzip" \
+        --data-binary @"${archive_name}" \
+        "${upload_url}?name=${archive_name}"
+
+    # Clean up the archive
+    rm -f "${archive_name}"
+
+    echo "GitHub release created successfully"
+}
+
+updateChangelog() {
+    local releaseNotes="$1"
+    
+    # Check if CHANGELOG.md exists, if not create it with header
+    if [[ ! -f "CHANGELOG.md" ]]; then
+        echo "# Changelog" > CHANGELOG.md
+        echo "" >> CHANGELOG.md
+    fi
+    
+    {
+        head -n 2 CHANGELOG.md
+        printf '%s\n\n' "$releaseNotes"
+        tail -n +3 CHANGELOG.md
+    } > CHANGELOG.md.tmp
+    mv CHANGELOG.md.tmp CHANGELOG.md
+}
+
+tagProject() {
+    local tagVersion=$1
+    
+    echo "Generating release notes"
+    releaseNotes="$(generateReleaseNotesText "v${tagVersion}")"
+    echo "Updating changelog"
+    updateChangelog "${releaseNotes}"
+    git add -A
+    git commit -m "ci: Release v$tagVersion"
+    git tag -a "v${tagVersion}" -m "ci: Release v$tagVersion"
+    git push
+    git push --tags
+    createGithubRelease "v${tagVersion}" "${releaseNotes}"
+}
+
+
+checkoutAndTagReleaseProject() {
+    gitCheckout "${RELEASE_REPO_NAME}" $CI_COMMIT_REF_NAME
+    cd "checkouts/${RELEASE_REPO_NAME}"
+    
+    currentVersion=$(readVersion)
+    
+    # Check if the current version tag already exists
+    if git rev-parse "v${currentVersion}" >/dev/null 2>&1; then
+        echo "Error: Tag v${currentVersion} already exists"
+        exit 1
+    fi
+    
+    tagVersion="$(incrementVersionNumber $currentVersion)"
+    
+    echo "Updating version"
+    updateVersion $tagVersion
+    echo "Tagging project"
+    tagProject $tagVersion
+    cd ../..
 }

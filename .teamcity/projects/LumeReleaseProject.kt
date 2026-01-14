@@ -1,6 +1,7 @@
 package projects
 
 import domain.SubProject
+import jetbrains.buildServer.configs.kotlin.FailureAction
 import jetbrains.buildServer.configs.kotlin.Project
 import jetbrains.buildServer.configs.kotlin.RelativeId
 import jetbrains.buildServer.configs.kotlin.buildFeatures.dockerRegistryConnections
@@ -52,6 +53,48 @@ object LumeReleaseProject: Project() {
                         loginToRegistry = on {
                             dockerRegistryId = "PROJECT_EXT_6"
                         }
+                    }
+                }
+            }
+
+            buildType {
+                id = RelativeId(Configuration.RELEASE_REPO_NAME.replace("-", "_") + "_Release")
+                name = "Release"
+
+                description = "Lume Platform release"
+
+                vcs {
+                    root(RelativeId(Configuration.RELEASE_REPO_NAME.replace("-", "_") + "_GitHub"))
+
+                    branchFilter = """
+                    +:<default>
+                    +:release*
+                """.trimIndent()
+                }
+
+                steps {
+                    script {
+                        id = "simpleRunner"
+                        scriptContent = """
+                            source ./scripts/buildHelpers.sh
+                            checkoutAndTagReleaseProject
+                        """.trimIndent()
+                        dockerImage = Configuration.RELEASE_IT_DOCKER_IMAGE
+                        dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+                    }
+                }
+
+                features {
+                    dockerRegistryConnections {
+                        loginToRegistry = on {
+                            dockerRegistryId = "PROJECT_EXT_6"
+                        }
+                    }
+                }
+
+                dependencies {
+                    snapshot(RelativeId(Configuration.RELEASE_REPO_NAME.replace("-", "_") + "_AllBranchBuild")) {
+                        onDependencyFailure = FailureAction.CANCEL
                     }
                 }
             }
