@@ -60,6 +60,24 @@ project {
             password = "%" + Configuration.GITHUB_TOKEN_CONFIGURATION_PROPERTY + "%"
         }
     })
+    vcsRoot(GitVcsRoot {
+        id = RelativeId(Configuration.RELEASE_REPO_NAME.replace("-", "_") + "_DeploymentsGitHub")
+
+        name = Configuration.RELEASE_REPO_NAME + " Deployments GitHub Repository"
+
+        url = Configuration.VCS_PREFIX + Configuration.RELEASE_REPO_NAME
+        branch = "refs/heads/main"
+        useTagsAsBranches = true
+        branchSpec = """
+                    +:refs/tags/*
+                    -:<default>
+                """.trimIndent()
+
+        authMethod = password {
+            userName = Configuration.GIT_USERNAME
+            password = "%" + Configuration.GITHUB_TOKEN_CONFIGURATION_PROPERTY + "%"
+        }
+    })
 
     // Create lume markets projects and their pipelines
     val subProjectsByGroup = Configuration.SUBPROJECTS.groupBy { it.group.name }
