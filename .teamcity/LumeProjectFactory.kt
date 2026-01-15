@@ -1,17 +1,16 @@
-import domain.SubProject
-import domain.SubProjectType
+import domain.ProjectDescriptor
+import domain.ProjectType
 import jetbrains.buildServer.configs.kotlin.Project
-import projects.LumeReleaseProject
 import projects.LumeShellProject
 
 object LumeProjectFactory {
 
-    fun createProject(subProject: SubProject): Project {
+    fun createProject(subProject: ProjectDescriptor): Project {
         return when(subProject.type) {
-            SubProjectType.SHELL -> LumeShellProject.create(subProject)
-            SubProjectType.MAVEN -> TODO()
-            SubProjectType.GRADLE -> TODO()
-            SubProjectType.NODE -> TODO()
+            ProjectType.SHELL -> LumeShellProject.create(subProject)
+            ProjectType.MAVEN -> TODO()
+            ProjectType.GRADLE -> TODO()
+            ProjectType.NODE -> TODO()
         }
     }
 }

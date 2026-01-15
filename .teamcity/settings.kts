@@ -61,10 +61,19 @@ project {
         }
     })
 
-    // Create subprojects and their pipelines
-    for (subProject in Configuration.SUBPROJECTS) {
-        subProject(LumeProjectFactory.createProject(subProject))
+    // Create lume markets projects and their pipelines
+    val subProjectsByGroup = Configuration.SUBPROJECTS.groupBy { it.group.name }
+    for ((groupName, subprojects) in subProjectsByGroup) {
+        subProject {
+            id = RelativeId(groupName + "_Group")
+            name = groupName
+
+            for (subProject in subprojects) {
+                subProject(LumeProjectFactory.createProject(subProject))
+            }
+        }
     }
+
     // Create lume-release project
     subProject(LumeReleaseProject.create(Configuration.SUBPROJECTS))
 

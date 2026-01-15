@@ -1,0 +1,97 @@
+package projects
+
+import domain.DeploymentDescriptor
+import jetbrains.buildServer.configs.kotlin.BuildTypeSettings
+import jetbrains.buildServer.configs.kotlin.Project
+import jetbrains.buildServer.configs.kotlin.RelativeId
+import jetbrains.buildServer.configs.kotlin.buildFeatures.dockerRegistryConnections
+import jetbrains.buildServer.configs.kotlin.buildSteps.ScriptBuildStep
+import jetbrains.buildServer.configs.kotlin.buildSteps.script
+import jetbrains.buildServer.configs.kotlin.vcs.GitVcsRoot
+
+object LumeDeploymentProject: Project() {
+
+    fun create(deployments: ArrayList<DeploymentDescriptor>): Project {
+        return Project {
+            id = RelativeId("deployments")
+
+            name = "Deployments"
+            description = "Lume Deployments"
+
+            vcsRoot(GitVcsRoot {
+                id = RelativeId(Configuration.RELEASE_REPO_NAME.replace("-", "_") + "_DeploymentsGitHub")
+
+                name = Configuration.RELEASE_REPO_NAME + " Deployments GitHub Repository"
+
+                url = Configuration.VCS_PREFIX + Configuration.RELEASE_REPO_NAME
+                branch = "refs/heads/main"
+                useTagsAsBranches = true
+                branchSpec = """
+                    +:refs/tags/*
+                    -:<default>
+                """.trimIndent()
+
+                authMethod = password {
+                    userName = Configuration.GIT_USERNAME
+                    password = "%" + Configuration.GITHUB_TOKEN_CONFIGURATION_PROPERTY + "%"
+                }
+            })
+
+            val deploymentsByEnvironment = deployments.groupBy { it.environment.name }
+            for ((environmentName, environmentDeployments) in deploymentsByEnvironment) {
+                subProject {
+                    id = RelativeId(environmentName + "_Environment")
+                    name = environmentName
+
+                    for (deployment in environmentDeployments) {
+                        buildType {
+                            id = RelativeId(deployment.relativeIdPath() + "_Deployment")
+                            name = "Deploy " + deployment.name
+                            type = BuildTypeSettings.Type.DEPLOYMENT
+
+                            description = "Deployment to " + deployment.name + " (" + environmentName + ") environment"
+
+                            vcs {
+                                root(RelativeId(Configuration.RELEASE_REPO_NAME.replace("-", "_") + "_DeploymentsGitHub"))
+                            }
+
+                            steps {
+                                script {
+                                    name = "Validate"
+                                    id = "validate"
+                                    scriptContent = """
+                                        echo "Validating whether chamnge request was approved for this release..."
+                                    """.trimIndent()
+                                    dockerImage = Configuration.DOCKER_BUILD_IMAGE
+                                    dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+                                }
+                                script {
+                                    name = "Deploy"
+                                    id = "deploy"
+                                    scriptContent = """
+                                        echo "Deploying %teamcity.build.branch% version to ${'$'}{DEPLOYMENT_NAME} ${'$'}{DEPLOYMENT_TYPE}..."
+                                    """.trimIndent()
+                                    dockerImage = Configuration.DOCKER_BUILD_IMAGE
+                                    dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+                                }
+                            }
+
+                            features {
+                                dockerRegistryConnections {
+                                    loginToRegistry = on {
+                                        dockerRegistryId = "PROJECT_EXT_6"
+                                    }
+                                }
+                            }
+
+                            params {
+                                param("DEPLOYMENT_NAME", deployment.name)
+                                param("DEPLOYMENT_TYPE", deployment.environment.name)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

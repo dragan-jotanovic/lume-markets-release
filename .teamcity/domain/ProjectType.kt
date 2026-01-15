@@ -1,5 +1,5 @@
 package domain
 
-enum class SubProjectType {
+enum class ProjectType {
     SHELL, MAVEN, GRADLE, NODE
 }

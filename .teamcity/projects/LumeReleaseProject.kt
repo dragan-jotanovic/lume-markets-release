@@ -1,6 +1,6 @@
 package projects
 
-import domain.SubProject
+import domain.ProjectDescriptor
 import jetbrains.buildServer.configs.kotlin.FailureAction
 import jetbrains.buildServer.configs.kotlin.Project
 import jetbrains.buildServer.configs.kotlin.RelativeId
@@ -11,12 +11,14 @@ import jetbrains.buildServer.configs.kotlin.triggers.finishBuildTrigger
 
 object LumeReleaseProject: Project() {
 
-    fun create(subProjects: ArrayList<SubProject>): Project {
+    fun create(subProjects: ArrayList<ProjectDescriptor>): Project {
         return Project {
             id = RelativeId(Configuration.RELEASE_REPO_NAME.replace("-", "_"))
 
             name = Configuration.RELEASE_REPO_NAME
             description = "Lume Platform Project"
+
+            subProject(LumeDeploymentProject.create(Configuration.DEPLOYMENTS))
 
             buildType {
                 templates(RelativeId("GitHubTriggerNotify"))
@@ -36,7 +38,7 @@ object LumeReleaseProject: Project() {
                         scriptContent = """
                             ./scripts/build.sh
                         """.trimIndent()
-                        dockerImage = Configuration.RELEASE_IT_DOCKER_IMAGE
+                        dockerImage = Configuration.DOCKER_BUILD_IMAGE
                         dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
                     }
                     script {
@@ -80,7 +82,7 @@ object LumeReleaseProject: Project() {
                             source ./scripts/buildHelpers.sh
                             checkoutAndTagReleaseProject
                         """.trimIndent()
-                        dockerImage = Configuration.RELEASE_IT_DOCKER_IMAGE
+                        dockerImage = Configuration.DOCKER_BUILD_IMAGE
                         dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
                     }
                 }
@@ -118,7 +120,7 @@ object LumeReleaseProject: Project() {
                         scriptContent = """
                             ./scripts/dependencyUpdate.sh %SERVICE_NAME% %SERVICE_VERSION% "%SERVICE_BRANCH%"
                         """.trimIndent()
-                        dockerImage = Configuration.RELEASE_IT_DOCKER_IMAGE
+                        dockerImage = Configuration.DOCKER_BUILD_IMAGE
                         dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
                     }
                 }
@@ -180,7 +182,7 @@ object LumeReleaseProject: Project() {
                             source ./scripts/buildHelpers.sh
                             prepareReleaseBranches
                         """.trimIndent()
-                        dockerImage = Configuration.RELEASE_IT_DOCKER_IMAGE
+                        dockerImage = Configuration.DOCKER_BUILD_IMAGE
                         dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
                     }
                 }

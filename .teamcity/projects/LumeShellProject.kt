@@ -1,17 +1,16 @@
 package projects
 
-import domain.SubProject
+import domain.ProjectDescriptor
 import jetbrains.buildServer.configs.kotlin.FailureAction
 import jetbrains.buildServer.configs.kotlin.Project
 import jetbrains.buildServer.configs.kotlin.RelativeId
 import jetbrains.buildServer.configs.kotlin.buildFeatures.dockerRegistryConnections
 import jetbrains.buildServer.configs.kotlin.buildSteps.ScriptBuildStep
 import jetbrains.buildServer.configs.kotlin.buildSteps.script
-import jetbrains.buildServer.configs.kotlin.vcs.GitVcsRoot
 
 object LumeShellProject: Project() {
 
-    fun create(subProject: SubProject): Project {
+    fun create(subProject: ProjectDescriptor): Project {
         return Project {
             id = RelativeId(subProject.normalizedName())
 
@@ -68,7 +67,7 @@ object LumeShellProject: Project() {
                         scriptContent = """
                             release-it-containerized patch --ci
                         """.trimIndent()
-                        dockerImage = Configuration.RELEASE_IT_DOCKER_IMAGE
+                        dockerImage = Configuration.DOCKER_BUILD_IMAGE
                         dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
                     }
                     script {
