@@ -85,8 +85,8 @@ object LumeDeploymentProject: Project() {
                             }
 
                             params {
-                                param("DEPLOYMENT_NAME", deployment.name)
-                                param("DEPLOYMENT_TYPE", deployment.environment.name)
+                                param("env.DEPLOYMENT_NAME", deployment.name)
+                                param("env.DEPLOYMENT_TYPE", deployment.environment.name)
                             }
                         }
                     }
