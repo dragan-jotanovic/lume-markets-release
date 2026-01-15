@@ -1,6 +1,7 @@
 package projects
 
 import domain.ProjectDescriptor
+import domain.ProjectGroup
 import jetbrains.buildServer.configs.kotlin.FailureAction
 import jetbrains.buildServer.configs.kotlin.Project
 import jetbrains.buildServer.configs.kotlin.RelativeId
@@ -127,18 +128,26 @@ object LumeReleaseProject: Project() {
 
                 triggers {
                     for (subproject in subProjects) {
-                        finishBuildTrigger {
-                            buildType = RelativeId(subproject.normalizedName() + "_Release").toString()
-                            successfulOnly = true
-                            branchFilter = """
-                                +:<default>
-                                +:release*
-                            """.trimIndent()
+                        if (subproject.group == ProjectGroup.SubProjects) {
+                            finishBuildTrigger {
+                                buildType = RelativeId(subproject.normalizedName() + "_Release").toString()
+                                successfulOnly = true
+                                branchFilter = """
+                                    +:<default>
+                                    +:release*
+                                """.trimIndent()
 
-                            buildParams {
-                                param("SERVICE_NAME", subproject.normalizedName())
-                                param("SERVICE_VERSION", "%dep.${RelativeId(subproject.normalizedName() + "_Release")}.OUT_SERVICE_VERSION%")
-                                param("SERVICE_BRANCH", "%dep.${RelativeId(subproject.normalizedName() + "_Release")}.OUT_SERVICE_BRANCH%")
+                                buildParams {
+                                    param("SERVICE_NAME", subproject.normalizedName())
+                                    param(
+                                        "SERVICE_VERSION",
+                                        "%dep.${RelativeId(subproject.normalizedName() + "_Release")}.OUT_SERVICE_VERSION%"
+                                    )
+                                    param(
+                                        "SERVICE_BRANCH",
+                                        "%dep.${RelativeId(subproject.normalizedName() + "_Release")}.OUT_SERVICE_BRANCH%"
+                                    )
+                                }
                             }
                         }
                     }
@@ -154,7 +163,9 @@ object LumeReleaseProject: Project() {
 
                 dependencies {
                     for (subproject in subProjects) {
-                        snapshot(RelativeId(subproject.normalizedName() + "_Release")) {
+                        if (subproject.group == ProjectGroup.SubProjects) {
+                            snapshot(RelativeId(subproject.normalizedName() + "_Release")) {
+                            }
                         }
                     }
                 }
