@@ -71,20 +71,6 @@ object LumeDeploymentProject: Project() {
                             }
                         }
                     }
-
-                    features {
-                        feature {
-                            id = "PROJECT_EXT_120"
-                            type = "deployment-dashboard-config"
-                            param("dashboardEnabled", "true")
-                            param("projectKey", "env.DEPLOYMENT_NAME")
-                            param("refreshSecs", "")
-                            param("environments", "DEV,DEMO,QA,PROD")
-                            param("environmentKey", "env.DEPLOYMENT_TYPE")
-                            param("multiEnvConfig", "false")
-                            param("versionKey", "teamcity.build.branch")
-                        }
-                    }
                 }
             }
         }
