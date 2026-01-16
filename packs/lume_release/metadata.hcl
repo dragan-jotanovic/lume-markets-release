@@ -5,7 +5,7 @@ app {
 pack {
   name        = "lume_release"
   description = "Lume markets Platform Release Package"
-  version     = "v4.1.0"
+  version     = "v4.1.1"
 }
 
 dependency "core_backend" {
