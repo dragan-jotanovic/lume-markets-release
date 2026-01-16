@@ -39,9 +39,9 @@ project {
             branch = "refs/heads/main"
             branchSpec = "+:refs/heads/(*)"
 
-            authMethod = password {
+            authMethod = token {
                 userName = Configuration.GIT_USERNAME
-                password = "%" + Configuration.GITHUB_TOKEN_CONFIGURATION_PROPERTY + "%"
+                value = "%" + Configuration.GITHUB_TOKEN_CONFIGURATION_PROPERTY + "%"
             }
         })
     }
