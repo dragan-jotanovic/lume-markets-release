@@ -7,6 +7,7 @@ import domain.ProjectType
 object Configuration {
     const val GITHUB_ORG = "dragan-jotanovic"
     const val VCS_PREFIX = "https://github.com/${GITHUB_ORG}/"
+    const val UPLOADED_SSH_KEY = "gh-test"
     const val GITHUB_TOKEN_CONFIGURATION_PROPERTY = "MY_GITHUB_TOKEN"
     const val GIT_EMAIL = "teamcity@lucera.com"
     const val GIT_USERNAME = "teamcity"
