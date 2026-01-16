@@ -132,7 +132,7 @@ generateReleaseNotesText() {
     if [[ -z $PREV_TAG ]]; then
         COMMITS="$(git log --pretty='%s')"
     else
-        if [[ "$CURRENT_TAG" != *.0 ]]; then
+        if [[ "$CURRENT_TAG" != *.1 ]]; then
             PREV_TAG="v$(decrementVersionNumber ${CURRENT_TAG#v})"
         fi
         COMMITS="$(git log --pretty='%s' ${PREV_TAG}..${UP_TO_COMMIT})"
