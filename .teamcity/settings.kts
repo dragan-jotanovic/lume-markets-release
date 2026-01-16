@@ -35,12 +35,13 @@ project {
 
             name = "${subProject.name} GitHub Repository"
 
-            url = Configuration.VCS_PREFIX.replace("https://github.com/", "git@github.com:") + subProject.name + ".git"
+            url = Configuration.VCS_PREFIX + subProject.name
             branch = "refs/heads/main"
             branchSpec = "+:refs/heads/(*)"
 
-            authMethod = uploadedKey {
-                uploadedKey = Configuration.UPLOADED_SSH_KEY
+            authMethod = password {
+                userName = Configuration.GIT_USERNAME
+                password = "%" + Configuration.GITHUB_TOKEN_CONFIGURATION_PROPERTY + "%"
             }
         })
     }
@@ -50,12 +51,13 @@ project {
 
         name = Configuration.RELEASE_REPO_NAME + " GitHub Repository"
 
-        url = Configuration.VCS_PREFIX.replace("https://github.com/", "git@github.com:") + Configuration.RELEASE_REPO_NAME
+        url = Configuration.VCS_PREFIX + Configuration.RELEASE_REPO_NAME
         branch = "refs/heads/main"
         branchSpec = "+:refs/heads/(*)"
 
-        authMethod = uploadedKey {
-            uploadedKey = Configuration.UPLOADED_SSH_KEY
+        authMethod = password {
+            userName = Configuration.GIT_USERNAME
+            password = "%" + Configuration.GITHUB_TOKEN_CONFIGURATION_PROPERTY + "%"
         }
     })
     vcsRoot(GitVcsRoot {
@@ -63,16 +65,17 @@ project {
 
         name = Configuration.RELEASE_REPO_NAME + " Deployments GitHub Repository"
 
-        url = Configuration.VCS_PREFIX.replace("https://github.com/", "git@github.com:") + Configuration.RELEASE_REPO_NAME
+        url = Configuration.VCS_PREFIX + Configuration.RELEASE_REPO_NAME
         branch = "refs/heads/main"
         useTagsAsBranches = true
         branchSpec = """
-            +:refs/tags/*
-            -:<default>
-        """.trimIndent()
+                    +:refs/tags/*
+                    -:<default>
+                """.trimIndent()
 
-        authMethod = uploadedKey {
-            uploadedKey = Configuration.UPLOADED_SSH_KEY
+        authMethod = password {
+            userName = Configuration.GIT_USERNAME
+            password = "%" + Configuration.GITHUB_TOKEN_CONFIGURATION_PROPERTY + "%"
         }
     })
 
