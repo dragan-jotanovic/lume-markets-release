@@ -62,7 +62,7 @@ gitCheckout() {
 
     git config --global --add safe.directory "$(pwd)"
     if [ ! -d "./.git" ]; then
-        REPO_PREFIX_WITH_USER=$(echo "$REPO_PREFIX" | sed "s/github.com/${GIT_USERNAME}@github.com/")
+        REPO_PREFIX_WITH_USER=$(echo "$REPO_PREFIX" | sed "s/github.com/${GIT_USERNAME}:${GITHUB_TOKEN}@github.com/")
         echo "Cloning ${REPO_PREFIX_WITH_USER}${REPO_NAME} to $(pwd)"
         git clone ${REPO_PREFIX_WITH_USER}${REPO_NAME} .
         git config user.email "${GIT_EMAIL}"
