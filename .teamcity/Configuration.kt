@@ -14,6 +14,7 @@ object Configuration {
 
     // Parent release project
     const val RELEASE_REPO_NAME = "lume-markets-release"
+    const val VARS_REPO_NAME = "lume-vars"
     // Define subprojects
     val SUBPROJECTS: ArrayList<ProjectDescriptor> = arrayListOf(
         ProjectDescriptor("core-backend", ProjectGroup.SubProjects, ProjectType.SHELL),

@@ -102,6 +102,7 @@ project {
         param("env.GITHUB_ORG", Configuration.GITHUB_ORG)
         param("env.REPO_PREFIX", Configuration.VCS_PREFIX)
         param("env.RELEASE_REPO_NAME", Configuration.RELEASE_REPO_NAME)
+        param("env.VARS_REPO_NAME", Configuration.VARS_REPO_NAME)
         param("env.SUBPROJECT_REPO_NAMES", Configuration.SUBPROJECTS.joinToString(separator = ",") { subProject -> subProject.name })
     }
 }

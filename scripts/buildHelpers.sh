@@ -345,15 +345,17 @@ prepareReleaseBranch() {
         echo "Release branch ${branch} already exists in ${project} repo"
     else
         git checkout -b ${branch}
-        tagVersion=$(readVersion)
         git push -u origin ${branch}
     
-        git checkout main
-        nextVersion="$(getNextMinorVersion $tagVersion)"
-        updateVersion ${nextVersion}
-        git add -A
-        git commit -m "ci: Started next release - $nextVersion"
-        git push
+        if [[ -f "./VERSION" ]]; then
+            tagVersion=$(readVersion)
+            git checkout main
+            nextVersion="$(getNextMinorVersion $tagVersion)"
+            updateVersion ${nextVersion}
+            git add -A
+            git commit -m "ci: Started next release - $nextVersion"
+            git push
+        fi
     fi
     cd ../..
 }
@@ -363,6 +365,7 @@ prepareReleaseBranches() {
     releaseVersion=$(getReleaseVersion $tagVersion)
     
     prepareReleaseBranch "${RELEASE_REPO_NAME}" "main" "$releaseVersion"
+    prepareReleaseBranch "${VARS_REPO_NAME}" "main" "$releaseVersion"
     while IFS= read -r line; do
         # Skip empty lines
         [[ -z "$line" ]] && continue
