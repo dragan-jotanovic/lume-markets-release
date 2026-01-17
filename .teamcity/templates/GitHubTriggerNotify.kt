@@ -27,7 +27,7 @@ object GitHubTriggerNotify : Template({
             publisher = github {
                 githubUrl = "https://api.github.com"
                 authType = personalToken {
-                    token = Configuration.VCS_SECURE_TOKEN
+                    token = "%" + Configuration.GITHUB_TOKEN_CONFIGURATION_PROPERTY + "%"
                 }
             }
         }

@@ -41,7 +41,7 @@ project {
 
             authMethod = password {
                 userName = Configuration.GIT_USERNAME
-                password = Configuration.VCS_SECURE_TOKEN
+                password = "%" + Configuration.GITHUB_TOKEN_CONFIGURATION_PROPERTY + "%"
             }
         })
     }
@@ -57,7 +57,7 @@ project {
 
         authMethod = password {
             userName = Configuration.GIT_USERNAME
-            password = Configuration.VCS_SECURE_TOKEN
+            password = "%" + Configuration.GITHUB_TOKEN_CONFIGURATION_PROPERTY + "%"
         }
     })
     vcsRoot(GitVcsRoot {
@@ -75,7 +75,7 @@ project {
 
         authMethod = password {
             userName = Configuration.GIT_USERNAME
-            password = Configuration.VCS_SECURE_TOKEN
+            password = "%" + Configuration.GITHUB_TOKEN_CONFIGURATION_PROPERTY + "%"
         }
     })
 
@@ -98,7 +98,7 @@ project {
     params {
         param("env.GIT_EMAIL", Configuration.GIT_EMAIL)
         param("env.GIT_USERNAME", Configuration.GIT_USERNAME)
-        password("env.GITHUB_TOKEN", Configuration.VCS_SECURE_TOKEN)
+        password("env.GITHUB_TOKEN", "%" + Configuration.GITHUB_TOKEN_CONFIGURATION_PROPERTY + "%")
         param("env.GITHUB_ORG", Configuration.GITHUB_ORG)
         param("env.REPO_PREFIX", Configuration.VCS_PREFIX)
         param("env.RELEASE_REPO_NAME", Configuration.RELEASE_REPO_NAME)
