@@ -40,7 +40,7 @@ project {
             branchSpec = "+:refs/heads/(*)"
 
             authMethod = password {
-                userName = Configuration.GIT_USERNAME
+                userName = Configuration.VCS_USERNAME
                 password = Configuration.VCS_SECURE_TOKEN
             }
         })
@@ -56,7 +56,7 @@ project {
         branchSpec = "+:refs/heads/(*)"
 
         authMethod = password {
-            userName = Configuration.GIT_USERNAME
+            userName = Configuration.VCS_USERNAME
             password = Configuration.VCS_SECURE_TOKEN
         }
     })
@@ -74,7 +74,7 @@ project {
                 """.trimIndent()
 
         authMethod = password {
-            userName = Configuration.GIT_USERNAME
+            userName = Configuration.VCS_USERNAME
             password = Configuration.VCS_SECURE_TOKEN
         }
     })
