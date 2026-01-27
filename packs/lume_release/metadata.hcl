@@ -15,5 +15,5 @@ dependency "core_backend" {
 
 dependency "venue_adapters" {
   alias  = "venue_adapters"
-  source = "git::https://github.com/dragan-jotanovic/venue-adapters.git//packs/venue_adapters?ref=v0.3.2&depth=1"
+  source = "git::https://github.com/dragan-jotanovic/venue-adapters.git//packs/venue_adapters?ref=v0.3.3&depth=1"
 }
