@@ -1,5 +1,32 @@
 # Changelog
 
+## [v4.2.3](https://github.com/dragan-jotanovic/lume-markets-release/compare/v4.2.2...v4.2.3) (2026-01-27)
+
+## venue-adapters
+
+### [0.3.3](https://github.com/dragan-jotanovic/venue-adapters/compare/v0.3.2...v0.3.3) (2026-01-27)
+
+#### Features
+
+* LCPI-123 - Added feature one ([0847edf](https://github.com/dragan-jotanovic/venue-adapters/commit/0847edf00e4291ae52725811ca75bf7daefa047a))
+
+#### Bug Fixes
+
+* LCPI-123 - Fixing readme ([2154efb](https://github.com/dragan-jotanovic/venue-adapters/commit/2154efb71179a8d6fb98ca6682cd2f64e8d10fce))
+
+## core-backend
+
+### [0.3.3](https://github.com/dragan-jotanovic/core-backend/compare/v0.3.2...v0.3.3) (2026-01-27)
+
+#### Features
+
+* LCPI-123 - Added feature one ([8d87f80](https://github.com/dragan-jotanovic/core-backend/commit/8d87f8035ec888d75a44cb0961d24b4147a72046))
+
+#### Bug Fixes
+
+* LCPI-123 - Fixed readme ([d878e2a](https://github.com/dragan-jotanovic/core-backend/commit/d878e2add8e90c81ebde2b99ccddb6b737c7fd8c))
+* LCPI-123 - Fixing readme ([120f0ca](https://github.com/dragan-jotanovic/core-backend/commit/120f0ca81f2f6e5eae0c0e3450c00928d6dacede))
+
 ## [v4.2.2](https://github.com/dragan-jotanovic/lume-markets-release/compare/v4.2.1...v4.2.2) (2026-01-27)
 
 ## core-backend
